@@ -18,6 +18,7 @@ Follow these steps to set up Apache Airflow on an AWS EC2 instance:
    pip3 install pandas s3fs apache-airflow
    airflow standalone
 
+(optional)
 4. Configure AWS Account Information:
    aws configure
    aws sts get-session-token
