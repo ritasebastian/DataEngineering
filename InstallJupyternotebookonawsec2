@@ -1,1 +1,23 @@
+# Create aws EC2 Instance with port open 8888
+# Install dependence packages
+# Install Java Use the repo file
+# Install Python PIP 
+sudo dnf install -y python3-pip
+# Creating Virtual env.,
+python3 -m venv jupyter_venv
+source jupyter_venv/bin/activate
+pip3 install jupyter
+jupyter notebook --ip=0.0.0.0
+# Change the port example 
+# jupyter notebook --ip=0.0.0.0 --port=XXXX
 
+#Get the token from output on the the above command
+http://127.0.0.1:8888/tree?token=2a6698bcd9853e958faca96efad5bb5cea42f798187c7001
+
+http://aws-ec2-public-id:8080 ( give new password and token from above )
+
+# Youtube : https://www.youtube.com/watch?v=UbPAyScG5hk
+
+# But it completely customized..
+
+# Need more information call 6612881946 or e-mail sebastian_sa@hotmail.com
