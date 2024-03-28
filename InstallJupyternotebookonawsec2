@@ -1,6 +1,7 @@
 # Create aws EC2 Instance with port open 8888
 # Install dependence packages
 # Install Java Use the repo file
+https://github.com/ritasebastian/DataEngineering/blob/main/InstallJavaonawsec2
 # Install Python PIP 
 sudo dnf install -y python3-pip
 # Creating Virtual env.,
