@@ -19,4 +19,4 @@ aws sts get-session-token
 To remove the default DAGs in Apache Airflow, you can modify the airflow.cfg configuration file to specify a different directory for storing DAGs or disable the loading of example DAGs altogether.
 airflow.cfg
 load_examples = False
-dags_folder = /path/to/your/dags
+dags_folder = /home/ec2-user/airflow/dags
