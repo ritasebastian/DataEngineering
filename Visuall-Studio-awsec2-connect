@@ -10,3 +10,5 @@ Host my-ec2
   IdentityFile "/Users/sesantia/Downloads/2024-oregan.pem"
   User ec2-user
   Port 22
+
+Youtube : https://www.youtube.com/watch?v=sQQjMnEkGjs&t=1224s
