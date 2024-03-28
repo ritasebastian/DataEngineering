@@ -1,24 +1,52 @@
-# Create aws EC2 Instance with port open 8888
-# Install dependence packages
-# Install Java Use the repo file
-https://github.com/ritasebastian/DataEngineering/blob/main/InstallJavaonawsec2
-# Install Python PIP 
-sudo dnf install -y python3-pip
-# Creating Virtual env.,
-python3 -m venv jupyter_venv
-source jupyter_venv/bin/activate
-pip3 install jupyter
-jupyter notebook --ip=0.0.0.0
-# Change the port example 
-# jupyter notebook --ip=0.0.0.0 --port=XXXX
+Setting Up Jupyter Notebook on AWS EC2 Instance
 
-#Get the token from output on the the above command
-http://127.0.0.1:8888/tree?token=2a6698bcd9853e958faca96efad5bb5cea42f798187c7001
+1. Create AWS EC2 Instance with Open Port 8888:
+   - Set up an AWS EC2 instance with port 8888 open to allow access to Jupyter Notebook.
 
-http://aws-ec2-public-id:8080 ( give new password and token from above )
+2. Install Dependencies:
+   - Install Java using the repository file from [here](https://github.com/ritasebastian/DataEngineering/blob/main/InstallJavaonawsec2).
+   - Install Python PIP:
+     sudo dnf install -y python3-pip
 
-# Youtube : https://www.youtube.com/watch?v=UbPAyScG5hk
+3. Create Virtual Environment and Install Jupyter:
+   - Create a virtual environment:
+     python3 -m venv jupyter_venv
+     source jupyter_venv/bin/activate
+   - Install Jupyter Notebook:
+     pip3 install jupyter
 
-# But it completely customized..
+4. Run Jupyter Notebook:
+   - Start Jupyter Notebook server:
+     jupyter notebook --ip=0.0.0.0
+   - Optionally, you can change the default port:
+     jupyter notebook --ip=0.0.0.0 --port=XXXX
+   - Retrieve the access token from the server output.
 
-# Need more information call 6612881946 or e-mail sebastian_sa@hotmail.com
+5. Access Jupyter Notebook:
+   - Access Jupyter Notebook using the URL provided in the output, typically:
+     http://EC2_Public_IP:8888/tree?token=YOUR_ACCESS_TOKEN
+   - Alternatively, access it via:
+     http://aws-ec2-public-id:8080
+   - Provide the new password and token obtained from the previous step.
+
+Additional Resources:
+   Check out this YouTube video for further customization options:
+   YouTube: https://www.youtube.com/watch?v=UbPAyScG5hk
+
+For more information, feel free to call 6612881946 or email sebastian_sa@hotmail.com.
+
+Example Commands:
+- Create aws EC2 Instance with port open 8888
+- Install dependence packages
+- Install Java using the repository file from [here](https://github.com/ritasebastian/DataEngineering/blob/main/InstallJavaonawsec2)
+- Install Python PIP
+  sudo dnf install -y python3-pip
+- Creating Virtual Environment and activating it
+  python3 -m venv jupyter_venv
+  source jupyter_venv/bin/activate
+- Install Jupyter Notebook
+  pip3 install jupyter
+- Running Jupyter Notebook server
+  jupyter notebook --ip=0.0.0.0
+- Changing default port
+  jupyter notebook --ip=0.0.0.0 --port=XXXX
