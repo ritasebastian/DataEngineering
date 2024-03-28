@@ -1,15 +1,17 @@
-# Dowload right java binary ( get it from Google for the latest version and url etc., )
+# Download the Java binary (replace the URL with the latest version)
 wget https://download.oracle.com/java/22/archive/jdk-22_linux-x64_bin.tar.gz
-# Extract the binary ( change your tar file accordingly )
+
+# Extract the downloaded binary
 tar zxvf jdk-22_linux-x64_bin.tar.gz
-# move the directory by Java
+
+# Rename the extracted directory to 'java'
 mv jdk-22 java
-# export the path on your .bash_profile
-export JAVA_HOME=/home/ec2-user/java
-export PATH=$JAVA_HOME/bin:$PATH:.
-export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-export PATH=$PATH:/home/ec2-user/java/bin:.
-source .bash_profile
+
+# Set up environment variables in .bash_profile
+echo 'export JAVA_HOME=/home/ec2-user/java' >> ~/.bash_profile
+echo 'export PATH=$JAVA_HOME/bin:$PATH:.' >> ~/.bash_profile
+echo 'export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> ~/.bash_profile
+source ~/.bash_profile
+
+# Verify Java installation
 java --version
-
-
