@@ -1,0 +1,12 @@
+# Install Visual Studio Code (VCS) software on lap-top
+# Create a aws-ec2 installance open 22 port to access
+# Add "Remote ssh" connect extention in VCS
+# choose new config.. take you to the foloder (/Users/ssantiago/.ssh)
+# Edit the file with ip address and unix user name and key file right location
+
+Example:
+Host my-ec2
+  HostName 54.184.85.157
+  IdentityFile "/Users/sesantia/Downloads/2024-oregan.pem"
+  User ec2-user
+  Port 22
