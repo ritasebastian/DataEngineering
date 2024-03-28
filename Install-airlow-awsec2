@@ -1,0 +1,22 @@
+# Run a ec2 Install with small/medium Enable 8080 port to access airflow webpage ( get the admin password from the console or standalone_admin_password.txt file )
+# Install dependency packages
+sudo dnf -y update
+sudo dnf install -y python3-pip
+sudo dnf install -y awscli
+
+# Creating Virtual env.,
+python3 -m venv airflow_venv
+source airflow_venv/bin/activate
+pip3 install pandas
+pip3 install s3fs
+pip3 install apache-airflow
+airflow standalone
+
+# configure the aws account info
+aws configure
+aws sts get-session-token
+
+To remove the default DAGs in Apache Airflow, you can modify the airflow.cfg configuration file to specify a different directory for storing DAGs or disable the loading of example DAGs altogether.
+airflow.cfg
+load_examples = False
+dags_folder = /path/to/your/dags
