@@ -20,3 +20,6 @@ To remove the default DAGs in Apache Airflow, you can modify the airflow.cfg con
 airflow.cfg
 load_examples = False
 dags_folder = /home/ec2-user/airflow/dags
+
+
+http://aws-ec2-public-id:8080
