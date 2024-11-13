@@ -15,3 +15,24 @@ source ~/.bash_profile
 
 # Verify Java installation
 java --version
+
+# Java 11
+
+# Download and install Amazon Corretto 11 (OpenJDK)
+wget https://corretto.aws/downloads/latest/amazon-corretto-11-x64-linux-jdk.tar.gz
+
+# Extract the downloaded binary
+tar zxvf amazon-corretto-11-x64-linux-jdk.tar.gz
+
+# Rename the extracted directory to 'java'
+mv amazon-corretto-11.* java
+
+# Set up environment variables in .bash_profile
+echo 'export JAVA_HOME=/home/ec2-user/java' >> ~/.bash_profile
+echo 'export PATH=$JAVA_HOME/bin:$PATH:.' >> ~/.bash_profile
+echo 'export CLASSPATH=.:$JAVA_HOME/lib' >> ~/.bash_profile
+source ~/.bash_profile
+
+# Verify Java installation
+java --version
+
