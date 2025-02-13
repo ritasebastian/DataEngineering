@@ -1,5 +1,7 @@
 Window functions in SQL operate on a set of rows related to the current row and return a value for each row. They do **not** collapse rows like aggregate functions; instead, they provide results while preserving individual rows.
 
+https://www.tutorialspoint.com/execute_sql_online.php
+
 ### **Types of Window Functions**
 ---
 #### **1. Ranking Functions**
