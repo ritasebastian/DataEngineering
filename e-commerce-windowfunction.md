@@ -458,4 +458,153 @@ FROM orders;
 
 ---
 
-These **advanced window function examples** are **crucial** for e-commerce analytics, tracking customer behavior, and analyzing sales trends. Let me know if you need more! 🚀
+Here are **more SQL window function examples** with detailed use cases and outputs for e-commerce analysis.
+
+---
+
+### **19. FIND THE CUSTOMER WITH THE HIGHEST TOTAL ORDERS**
+```sql
+SELECT customer_id, 
+       COUNT(order_id) AS total_orders,
+       RANK() OVER (ORDER BY COUNT(order_id) DESC) AS order_rank
+FROM orders
+GROUP BY customer_id;
+```
+**Example Output:**
+| customer_id | total_orders | order_rank |
+|------------|-------------|------------|
+| 1          | 5           | 1          |
+| 2          | 4           | 2          |
+| 3          | 3           | 3          |
+
+🔹 **Use Case:** Identify the **top customer** with the highest number of orders.
+
+---
+
+### **20. FIND THE MOST EXPENSIVE PRODUCT ORDERED BY EACH CUSTOMER**
+```sql
+SELECT o.customer_id, o.order_id, o.product_id, p.price,
+       MAX(p.price) OVER (PARTITION BY o.customer_id) AS max_price_per_customer
+FROM orders o
+JOIN products p ON o.product_id = p.product_id;
+```
+**Example Output:**
+| customer_id | order_id | product_id | price  | max_price_per_customer |
+|------------|----------|------------|--------|------------------------|
+| 1          | 1        | 1          | 1200.0 | 1200.0                 |
+| 1          | 6        | 2          | 800.0  | 1200.0                 |
+| 2          | 2        | 2          | 800.0  | 800.0                  |
+| 2          | 7        | 3          | 500.0  | 800.0                  |
+
+🔹 **Use Case:** Find the **highest-priced product** a customer has ordered.
+
+---
+
+### **21. FIND CUSTOMERS WHO SPENT MORE THAN AVERAGE ORDER VALUE**
+```sql
+SELECT o.customer_id, o.order_id, (p.price * o.quantity) AS total_order_value,
+       AVG(p.price * o.quantity) OVER () AS avg_order_value
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+WHERE (p.price * o.quantity) > (SELECT AVG(p.price * o.quantity) FROM orders o JOIN products p ON o.product_id = p.product_id);
+```
+**Example Output:**
+| customer_id | order_id | total_order_value | avg_order_value |
+|------------|----------|------------------|----------------|
+| 1          | 1        | 1200.0           | 670.0         |
+| 2          | 2        | 1600.0           | 670.0         |
+
+🔹 **Use Case:** Find customers **spending above average** order value.
+
+---
+
+### **22. CALCULATE CUMULATIVE REVENUE PER CUSTOMER**
+```sql
+SELECT o.customer_id, o.order_id, o.order_date, (p.price * o.quantity) AS order_value,
+       SUM(p.price * o.quantity) OVER (PARTITION BY o.customer_id ORDER BY o.order_date) AS cumulative_revenue
+FROM orders o
+JOIN products p ON o.product_id = p.product_id;
+```
+**Example Output:**
+| customer_id | order_id | order_date  | order_value | cumulative_revenue |
+|------------|----------|------------|-------------|--------------------|
+| 1          | 1        | 2024-02-01 | 1200.0      | 1200.0             |
+| 1          | 6        | 2024-02-06 | 1600.0      | 2800.0             |
+| 2          | 2        | 2024-02-02 | 1600.0      | 1600.0             |
+| 2          | 7        | 2024-02-07 | 500.0       | 2100.0             |
+
+🔹 **Use Case:** Track how **revenue accumulates** for each customer over time.
+
+---
+
+### **23. FIND BIGGEST PURCHASE BY EACH CUSTOMER**
+```sql
+SELECT o.customer_id, o.order_id, o.order_date, (p.price * o.quantity) AS order_value,
+       MAX(p.price * o.quantity) OVER (PARTITION BY o.customer_id) AS max_order_value
+FROM orders o
+JOIN products p ON o.product_id = p.product_id;
+```
+**Example Output:**
+| customer_id | order_id | order_date  | order_value | max_order_value |
+|------------|----------|------------|-------------|-----------------|
+| 1          | 1        | 2024-02-01 | 1200.0      | 1600.0          |
+| 1          | 6        | 2024-02-06 | 1600.0      | 1600.0          |
+| 2          | 2        | 2024-02-02 | 1600.0      | 1600.0          |
+| 2          | 7        | 2024-02-07 | 500.0       | 1600.0          |
+
+🔹 **Use Case:** Identify the **largest single purchase** per customer.
+
+---
+
+### **24. FIND CUSTOMERS WHOSE LATEST ORDER IS ABOVE AVERAGE**
+```sql
+SELECT o.customer_id, o.order_id, o.order_date, (p.price * o.quantity) AS last_order_value
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+WHERE o.order_date = (SELECT MAX(o2.order_date) FROM orders o2 WHERE o2.customer_id = o.customer_id)
+AND (p.price * o.quantity) > (SELECT AVG(p.price * o.quantity) FROM orders o JOIN products p ON o.product_id = p.product_id);
+```
+**Example Output:**
+| customer_id | order_id | order_date  | last_order_value |
+|------------|----------|------------|------------------|
+| 1          | 6        | 2024-02-06 | 1600.0           |
+
+🔹 **Use Case:** Find customers whose **most recent order is above average**.
+
+---
+
+### **25. TRACK CHANGES IN ORDER QUANTITY OVER TIME**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       quantity - LAG(quantity, 1) OVER (PARTITION BY customer_id ORDER BY order_date) AS quantity_change
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | quantity_change |
+|----------|------------|------------|----------|-----------------|
+| 1        | 1          | 2024-02-01 | 1        | NULL            |
+| 6        | 1          | 2024-02-06 | 2        | 1               |
+| 2        | 2          | 2024-02-02 | 2        | NULL            |
+| 7        | 2          | 2024-02-07 | 1        | -1              |
+
+🔹 **Use Case:** Monitor **order volume trends** per customer.
+
+---
+
+### **26. FIND CUSTOMERS WHO HAVE NOT ORDERED RECENTLY**
+```sql
+SELECT customer_id, MAX(order_date) AS last_order_date,
+       CURRENT_DATE - MAX(order_date) AS days_since_last_order
+FROM orders
+GROUP BY customer_id
+HAVING (CURRENT_DATE - MAX(order_date)) > 30;
+```
+**Example Output:**
+| customer_id | last_order_date | days_since_last_order |
+|------------|----------------|----------------------|
+| 3          | 2023-12-30      | 45                   |
+
+🔹 **Use Case:** Identify **inactive customers** for re-engagement.
+
+---
+
