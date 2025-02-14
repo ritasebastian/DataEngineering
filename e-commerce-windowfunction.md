@@ -296,3 +296,166 @@ FROM orders;
 🔹 **Use Case:** Track cumulative purchases per customer.
 
 ---
+Here are **more SQL window function examples** with realistic e-commerce use cases and sample outputs.
+
+---
+
+### **10. COUNT() OVER() – Count orders per customer**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       COUNT(order_id) OVER (PARTITION BY customer_id) AS total_orders
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | total_orders |
+|----------|------------|------------|----------|-------------|
+| 1        | 1          | 2024-02-01 | 1        | 2           |
+| 6        | 1          | 2024-02-06 | 2        | 2           |
+| 2        | 2          | 2024-02-02 | 2        | 2           |
+| 7        | 2          | 2024-02-07 | 1        | 2           |
+
+🔹 **Use Case:** Find the number of orders each customer placed.
+
+---
+
+### **11. AVG() OVER() – Running average of order quantity**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       AVG(quantity) OVER (PARTITION BY customer_id ORDER BY order_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS avg_order_quantity
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | avg_order_quantity |
+|----------|------------|------------|----------|--------------------|
+| 1        | 1          | 2024-02-01 | 1        | 1.0                |
+| 6        | 1          | 2024-02-06 | 2        | 1.5                |
+| 2        | 2          | 2024-02-02 | 2        | 2.0                |
+| 7        | 2          | 2024-02-07 | 1        | 1.5                |
+
+🔹 **Use Case:** Track the **average** order quantity for each customer.
+
+---
+
+### **12. MAX() OVER() – Find the max quantity ordered per customer**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       MAX(quantity) OVER (PARTITION BY customer_id) AS max_order_quantity
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | max_order_quantity |
+|----------|------------|------------|----------|--------------------|
+| 1        | 1          | 2024-02-01 | 1        | 2                  |
+| 6        | 1          | 2024-02-06 | 2        | 2                  |
+| 2        | 2          | 2024-02-02 | 2        | 2                  |
+| 7        | 2          | 2024-02-07 | 1        | 2                  |
+
+🔹 **Use Case:** Identify the **largest quantity** a customer has ordered.
+
+---
+
+### **13. MIN() OVER() – Find the first order quantity per customer**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       MIN(quantity) OVER (PARTITION BY customer_id) AS min_order_quantity
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | min_order_quantity |
+|----------|------------|------------|----------|--------------------|
+| 1        | 1          | 2024-02-01 | 1        | 1                  |
+| 6        | 1          | 2024-02-06 | 2        | 1                  |
+| 2        | 2          | 2024-02-02 | 2        | 1                  |
+| 7        | 2          | 2024-02-07 | 1        | 1                  |
+
+🔹 **Use Case:** Find the **smallest** order quantity per customer.
+
+---
+
+### **14. PERCENT_RANK() – Determine order position within customer history**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       PERCENT_RANK() OVER (PARTITION BY customer_id ORDER BY order_date) AS order_percentile
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | order_percentile |
+|----------|------------|------------|----------|------------------|
+| 1        | 1          | 2024-02-01 | 1        | 0.00             |
+| 6        | 1          | 2024-02-06 | 2        | 1.00             |
+| 2        | 2          | 2024-02-02 | 2        | 0.00             |
+| 7        | 2          | 2024-02-07 | 1        | 1.00             |
+
+🔹 **Use Case:** Determine the **position of an order** relative to others.
+
+---
+
+### **15. CUME_DIST() – Find cumulative distribution of orders**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       CUME_DIST() OVER (PARTITION BY customer_id ORDER BY order_date) AS cume_distribution
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | cume_distribution |
+|----------|------------|------------|----------|-------------------|
+| 1        | 1          | 2024-02-01 | 1        | 0.5               |
+| 6        | 1          | 2024-02-06 | 2        | 1.0               |
+| 2        | 2          | 2024-02-02 | 2        | 0.5               |
+| 7        | 2          | 2024-02-07 | 1        | 1.0               |
+
+🔹 **Use Case:** Calculate the **cumulative percentage** of orders per customer.
+
+---
+
+### **16. DIFFERENCE BETWEEN CURRENT AND PREVIOUS ORDER DATE**
+```sql
+SELECT order_id, customer_id, order_date,
+       order_date - LAG(order_date, 1) OVER (PARTITION BY customer_id ORDER BY order_date) AS days_since_last_order
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | days_since_last_order |
+|----------|------------|------------|----------------------|
+| 1        | 1          | 2024-02-01 | NULL                 |
+| 6        | 1          | 2024-02-06 | 5                    |
+| 2        | 2          | 2024-02-02 | NULL                 |
+| 7        | 2          | 2024-02-07 | 5                    |
+
+🔹 **Use Case:** Find **gaps between customer orders**.
+
+---
+
+### **17. FIND CUSTOMERS WHO ORDERED FOR CONSECUTIVE DAYS**
+```sql
+SELECT order_id, customer_id, order_date,
+       order_date - LAG(order_date, 1) OVER (PARTITION BY customer_id ORDER BY order_date) AS days_diff
+FROM orders
+WHERE order_date - LAG(order_date, 1) OVER (PARTITION BY customer_id ORDER BY order_date) = 1;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | days_diff |
+|----------|------------|------------|----------|
+| 6        | 1          | 2024-02-06 | 1        |
+
+🔹 **Use Case:** Find customers who made **back-to-back purchases**.
+
+---
+
+### **18. ROLLING SALES SUM OVER LAST 3 ORDERS**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       SUM(quantity) OVER (PARTITION BY customer_id ORDER BY order_date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS rolling_3_orders
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | rolling_3_orders |
+|----------|------------|------------|----------|------------------|
+| 1        | 1          | 2024-02-01 | 1        | 1                |
+| 6        | 1          | 2024-02-06 | 2        | 3                |
+
+🔹 **Use Case:** Calculate **rolling sales trends**.
+
+---
+
+These **advanced window function examples** are **crucial** for e-commerce analytics, tracking customer behavior, and analyzing sales trends. Let me know if you need more! 🚀
