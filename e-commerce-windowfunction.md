@@ -607,4 +607,180 @@ HAVING (CURRENT_DATE - MAX(order_date)) > 30;
 🔹 **Use Case:** Identify **inactive customers** for re-engagement.
 
 ---
+Here are **more advanced SQL window function examples** with detailed **e-commerce use cases** and **realistic outputs** to enhance your understanding.
+
+---
+
+### **27. FIND THE TIME GAP BETWEEN ORDERS FOR EACH CUSTOMER**
+```sql
+SELECT order_id, customer_id, order_date,
+       order_date - LAG(order_date, 1) OVER (PARTITION BY customer_id ORDER BY order_date) AS days_since_last_order
+FROM orders;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | days_since_last_order |
+|----------|------------|------------|----------------------|
+| 1        | 1          | 2024-02-01 | NULL                 |
+| 6        | 1          | 2024-02-06 | 5                    |
+| 2        | 2          | 2024-02-02 | NULL                 |
+| 7        | 2          | 2024-02-07 | 5                    |
+
+🔹 **Use Case:** Find **repeat purchase frequency** for customers.
+
+---
+
+### **28. FIND ORDERS WHERE QUANTITY INCREASED COMPARED TO PREVIOUS ORDER**
+```sql
+SELECT order_id, customer_id, order_date, quantity,
+       quantity - LAG(quantity, 1) OVER (PARTITION BY customer_id ORDER BY order_date) AS quantity_change
+FROM orders
+WHERE quantity - LAG(quantity, 1) OVER (PARTITION BY customer_id ORDER BY order_date) > 0;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | quantity | quantity_change |
+|----------|------------|------------|----------|-----------------|
+| 6        | 1          | 2024-02-06 | 2        | 1               |
+
+🔹 **Use Case:** Identify **customers increasing their order quantity**.
+
+---
+
+### **29. FIND THE LAST THREE ORDERS PER CUSTOMER**
+```sql
+SELECT order_id, customer_id, order_date,
+       ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS order_rank
+FROM orders
+WHERE ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) <= 3;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | order_rank |
+|----------|------------|------------|-----------|
+| 6        | 1          | 2024-02-06 | 1         |
+| 1        | 1          | 2024-02-01 | 2         |
+| 7        | 2          | 2024-02-07 | 1         |
+
+🔹 **Use Case:** Find **most recent orders** for customer service follow-ups.
+
+---
+
+### **30. CALCULATE AVERAGE ORDER VALUE OVER LAST 5 ORDERS**
+```sql
+SELECT order_id, customer_id, order_date, (p.price * o.quantity) AS order_value,
+       AVG(p.price * o.quantity) OVER (PARTITION BY o.customer_id ORDER BY o.order_date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS avg_last_5_orders
+FROM orders o
+JOIN products p ON o.product_id = p.product_id;
+```
+**Example Output:**
+| order_id | customer_id | order_date  | order_value | avg_last_5_orders |
+|----------|------------|------------|-------------|-------------------|
+| 1        | 1          | 2024-02-01 | 1200.0      | 1200.0            |
+| 6        | 1          | 2024-02-06 | 800.0       | 1000.0            |
+
+🔹 **Use Case:** Track **average spending behavior** per customer.
+
+---
+
+### **31. FIND CUSTOMERS WHO PLACED TWO ORDERS ON THE SAME DAY**
+```sql
+SELECT customer_id, order_date, COUNT(order_id) AS orders_on_same_day
+FROM orders
+GROUP BY customer_id, order_date
+HAVING COUNT(order_id) > 1;
+```
+**Example Output:**
+| customer_id | order_date  | orders_on_same_day |
+|------------|------------|--------------------|
+| 2          | 2024-02-02 | 2                  |
+
+🔹 **Use Case:** Detect **bulk orders** placed on the same day.
+
+---
+
+### **32. RANK PRODUCTS BASED ON TOTAL SALES PER CATEGORY**
+```sql
+SELECT p.category, p.product_name, SUM(o.quantity) AS total_sold,
+       RANK() OVER (PARTITION BY p.category ORDER BY SUM(o.quantity) DESC) AS sales_rank
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+GROUP BY p.category, p.product_name;
+```
+**Example Output:**
+| category     | product_name | total_sold | sales_rank |
+|-------------|-------------|------------|-----------|
+| Electronics | Laptop      | 10         | 1         |
+| Electronics | Smartphone  | 7          | 2         |
+
+🔹 **Use Case:** Identify **best-selling products per category**.
+
+---
+
+### **33. FIND CUSTOMERS WHO ORDERED EVERY MONTH IN THE LAST 6 MONTHS**
+```sql
+SELECT customer_id, COUNT(DISTINCT EXTRACT(MONTH FROM order_date)) AS months_ordered
+FROM orders
+WHERE order_date >= CURRENT_DATE - INTERVAL '6 months'
+GROUP BY customer_id
+HAVING COUNT(DISTINCT EXTRACT(MONTH FROM order_date)) = 6;
+```
+**Example Output:**
+| customer_id | months_ordered |
+|------------|---------------|
+| 1          | 6             |
+
+🔹 **Use Case:** Identify **highly engaged customers**.
+
+---
+
+### **34. FIND THE MOST COMMON ORDER QUANTITY**
+```sql
+SELECT quantity, COUNT(*) AS frequency,
+       RANK() OVER (ORDER BY COUNT(*) DESC) AS quantity_rank
+FROM orders
+GROUP BY quantity;
+```
+**Example Output:**
+| quantity | frequency | quantity_rank |
+|---------|----------|--------------|
+| 2       | 5        | 1            |
+| 1       | 3        | 2            |
+
+🔹 **Use Case:** Understand **order patterns** for inventory planning.
+
+---
+
+### **35. FIND CUSTOMERS WHO HAVE BEEN CONSISTENTLY INCREASING ORDER VALUE**
+```sql
+SELECT customer_id, order_id, order_date, (p.price * o.quantity) AS order_value,
+       LAG((p.price * o.quantity), 1) OVER (PARTITION BY o.customer_id ORDER BY o.order_date) AS prev_order_value
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+WHERE (p.price * o.quantity) > LAG((p.price * o.quantity), 1) OVER (PARTITION BY o.customer_id ORDER BY o.order_date);
+```
+**Example Output:**
+| customer_id | order_id | order_date  | order_value | prev_order_value |
+|------------|----------|------------|------------|------------------|
+| 1          | 6        | 2024-02-06 | 1600.0     | 1200.0           |
+
+🔹 **Use Case:** Identify **high-value customers** who are increasing their spending.
+
+---
+
+### **36. FIND CUSTOMERS WHO HAVE DROPPED THEIR SPENDING OVER TIME**
+```sql
+SELECT customer_id, order_id, order_date, (p.price * o.quantity) AS order_value,
+       LEAD((p.price * o.quantity), 1) OVER (PARTITION BY o.customer_id ORDER BY o.order_date) AS next_order_value
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+WHERE (p.price * o.quantity) > LEAD((p.price * o.quantity), 1) OVER (PARTITION BY o.customer_id ORDER BY o.order_date);
+```
+**Example Output:**
+| customer_id | order_id | order_date  | order_value | next_order_value |
+|------------|----------|------------|------------|------------------|
+| 2          | 2        | 2024-02-02 | 1600.0     | 500.0            |
+
+🔹 **Use Case:** Detect **potential churn risks**.
+
+---
+
+
 
